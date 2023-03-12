@@ -67,9 +67,7 @@ extension SlidingSheetView {
                                                 green: 229 / 255,
                                                 blue: 229 / 255,
                                                 alpha: 1)
-        
-        
-        
+                
         // MARK: - Initialization
         
         public init(contentView: UIView,

@@ -13,54 +13,84 @@
 import UIKit
 
 public class SlidingSheetController: UIViewController, UIGestureRecognizerDelegate, SlidingSheetViewDelegate {
-    public weak var delegate: SlidingSheetControllerDelegate?
-    public var slidingSheetView: SlidingSheetView
     
+    // MARK: - Public Properties
+    
+    /// Delegate of the events available via the controller.
+    public weak var delegate: SlidingSheetControllerDelegate?
+    
+    /// Instance of the sheet view.
+    public private(set) var sheetView: SlidingSheetView
+    
+    /// Background view outside the frame of the sheet.
+    public private(set) var backgroundView = UIView()
+    
+    // MARK: - Private Properties
+    
+    /// Tap gesture used to dismiss the sheet outside its frame.
     private var tapGesture = UITapGestureRecognizer()
+    
+    /// Height constraint of the sheet.
     private var heightConstraint: NSLayoutConstraint?
-    private var backgroundView = UIView()
-
+    
+    // MARK: - Initialization
+    
+    /// Initialize a new sliding sheet controller with a sliding sheet view based upon
+    /// passed configuration object.
+    ///
+    /// - Parameter config: configuration.
     public convenience init(config: SlidingSheetView.Config) {
-        let slidingSheetView = SlidingSheetView(config: config)
-        self.init(slidingSheetView: slidingSheetView)
+        let sheetView = SlidingSheetView(config: config)
+        self.init(sheetView: sheetView)
     }
     
-    public init(slidingSheetView: SlidingSheetView) {
-        self.slidingSheetView = slidingSheetView
+    /// Initialize a new controller with passed instance of the sliding sheet.
+    ///
+    /// - Parameter slidingSheetView: sliding sheet view.
+    public init(sheetView: SlidingSheetView) {
+        self.sheetView = sheetView
         super.init(nibName: nil, bundle: nil)
-        
-        self.modalPresentationStyle = .overCurrentContext
-        self.modalTransitionStyle = .crossDissolve
-        self.modalPresentationCapturesStatusBarAppearance = true
+        setupUIPresentation()
     }
     
     public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Public Methods
+    
+    /// Present the sheet from a parent view controller.
+    ///
+    /// - Parameter vc: view controller which present `self`.
     public func present(from vc: UIViewController) {
         vc.present(self, animated: false)
     }
+    
+    // MARK: - View Life-cycle
  
     override public func viewDidLoad() {
         super.viewDidLoad()
-        installTapGesture()
+        setupTapGesture()
     }
  
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        setupSubviews()
-        // viewDidAppear?()
+        setupUI()
     }
     
-    public override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        // viewDidDisappear?()
+    // MARK: - Private Methods
+    
+    /// Setup the user interface.
+    private func setupUIPresentation() {
+        self.modalPresentationStyle = .overCurrentContext
+        self.modalTransitionStyle = .crossDissolve
+        self.modalPresentationCapturesStatusBarAppearance = true
     }
     
-    private func setupSubviews() {
+    /// Setup the interface elements.
+    private func setupUI() {
         backgroundView.backgroundColor = .clear
-        slidingSheetView.delegate = self
+        sheetView.delegate = self
         
         // Install background view
         self.view.addSubview(backgroundView)
@@ -73,23 +103,24 @@ public class SlidingSheetController: UIViewController, UIGestureRecognizerDelega
         ])
         
         // Install sliding view
-        self.view.addSubview(slidingSheetView)
-        slidingSheetView.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(sheetView)
+        sheetView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            slidingSheetView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-            slidingSheetView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-            slidingSheetView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+            sheetView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            sheetView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            sheetView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
         ])
         
-        self.heightConstraint = slidingSheetView.heightAnchor.constraint(equalToConstant: 0)
+        self.heightConstraint = sheetView.heightAnchor.constraint(equalToConstant: 0)
         
         self.view.setNeedsLayout()
         self.view.layoutIfNeeded()
         
-        slidingSheetView.setupInitialHeight()
+        sheetView.setupInitialHeight()
     }
     
-    private func installTapGesture() {
+    /// Setup the tap gesture used to dismiss the sheet outside its frame.
+    private func setupTapGesture() {
         tapGesture.addTarget(self, action: #selector(onTap(sender:)))
         tapGesture.delegate = self
         view.addGestureRecognizer(tapGesture)
@@ -97,17 +128,18 @@ public class SlidingSheetController: UIViewController, UIGestureRecognizerDelega
     
     @objc
     private func onTap(sender: UITapGestureRecognizer) {
-        let isTapOutsideSliding = !slidingSheetView.frame.contains(sender.location(in: view))
-        if slidingSheetView.config.isDismissable, isTapOutsideSliding {
+        let isTapOutsideSliding = !sheetView.frame.contains(sender.location(in: view))
+        if sheetView.config.isDismissable, isTapOutsideSliding {
             dismissSheet()
         }
     }
     
-    fileprivate func dismissSheet() {
+    /// Dismiss the sheet.
+    private func dismissSheet() {
         delegate?.slidingSheetControllerWillDismiss(self)
         
         heightConstraint?.isActive = false
-        heightConstraint = slidingSheetView.heightAnchor.constraint(equalToConstant: 0)
+        heightConstraint = sheetView.heightAnchor.constraint(equalToConstant: 0)
         heightConstraint?.isActive = true
         
         UIView.animate(withDuration: 0.2, animations: {
@@ -148,7 +180,7 @@ public class SlidingSheetController: UIViewController, UIGestureRecognizerDelega
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
                                   shouldReceive touch: UITouch) -> Bool {
         
-        let isDescendantOfSliding = touch.view?.isDescendant(of: slidingSheetView) ?? false
+        let isDescendantOfSliding = touch.view?.isDescendant(of: sheetView) ?? false
         return !isDescendantOfSliding
     }
     

@@ -53,19 +53,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ViewController.CellIdentifier, for: indexPath)
         cell.textLabel?.numberOfLines = 0
-        switch indexPath.row {
-        case 0:
-            cell.textLabel?.text = "Present tableView with it's content height"
-            return cell
-        case 1:
-            cell.textLabel?.text = "Present tableView with middle,\ntop and bottom anchors"
-            return cell
-        case 2:
-            cell.textLabel?.text = "Push \"split screen\" with\naccessible background"
-            return cell
-        default:
-            return UITableViewCell()
-        }
+            cell.textLabel?.text = "Test"
+        return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -81,7 +70,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             isDismissable: true
         )
         let bottomSheetView = SlidingSheetView(config: configuration)
-        let bottomSheetViewController = SlidingSheetController(slidingSheetView: bottomSheetView)
+        let bottomSheetViewController = SlidingSheetController(sheetView: bottomSheetView)
         
        // bottomSheetViewController.delegate = self
         bottomSheetViewController.present(from: self)
@@ -95,7 +84,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     let data = ExampleTableViewDataSource()
 
 }
-
 
 class ExampleTableViewDataSource: NSObject {
     
