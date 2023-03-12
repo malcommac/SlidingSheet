@@ -66,7 +66,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             initialPosition: .middle(),
             allowedPositions: [.middle(), .top(), .bottom()],
             showPullIndicator: true,
-            dismissIcon: UIImage(named: "test"),
             isDismissable: true
         )
         let bottomSheetView = SlidingSheetView(config: configuration)

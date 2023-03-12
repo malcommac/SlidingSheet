@@ -15,6 +15,16 @@ import Foundation
 /// The delegate to receive relevant information about the state of the sliding sheet.
 public protocol SlidingSheetControllerDelegate: AnyObject {
     
+    /// Height of the sheet did change to a new value.
+    ///
+    /// - Parameters:
+    ///   - controller: controller.
+    ///   - height: new value.
+    ///   - percentage: which percentage of area is covered by the height of the slider.
+    func slidingSheetView(_ controller: SlidingSheetController,
+                          heightDidChange height: CGFloat,
+                          percentage: CGFloat)
+    
     /// The sheet is about to be dismissed.
     ///
     /// - Parameter controller: controller.

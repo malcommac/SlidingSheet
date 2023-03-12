@@ -19,8 +19,9 @@ public protocol SlidingSheetViewDelegate: AnyObject {
     ///
     /// - Parameters:
     ///   - view: sliding sheet.
-    ///   - y: new value.
-    func slidingSheetView(_ view: SlidingSheetView, heightDidChange y: CGFloat)
+    ///   - height: new value.
+    func slidingSheetView(_ view: SlidingSheetView,
+                          heightDidChange height: CGFloat)
     
     /// Sheet will move to a new allowed position.
     ///
@@ -37,8 +38,8 @@ public protocol SlidingSheetViewDelegate: AnyObject {
     ///   - fromPosition: old position.
     ///   - toPosition: new position.
     func slidingSheetView(_ view: SlidingSheetView,
-                                didMoveFrom fromPosition: SlidingSheetView.Position,
-                                to toPosition: SlidingSheetView.Position)
+                          didMoveFrom fromPosition: SlidingSheetView.Position,
+                          to toPosition: SlidingSheetView.Position)
     
     /// Sliding sheet did request a dismission to its controller.
     ///

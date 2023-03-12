@@ -31,6 +31,7 @@ extension SlidingSheetView {
         /// Allowed positions of the bottom sheet.
         public var allowedPositions: [Position]
         
+        /// Should slide from bottom or not.
         public var slideToAppear: Bool
         
         /// Show a system-like pull indicator to dismiss the sheet.
@@ -67,7 +68,12 @@ extension SlidingSheetView {
                                                 green: 229 / 255,
                                                 blue: 229 / 255,
                                                 alpha: 1)
-                
+        
+        /// If set, when sliding view is presented via `SlidingSheetController` this
+        /// option provide a dim to black of the area outside the sliding sheet providing
+        /// a better focus on content.
+        public var dimmedBackground = true
+        
         // MARK: - Initialization
         
         public init(contentView: UIView,
@@ -76,9 +82,7 @@ extension SlidingSheetView {
                     allowedPositions: [Position],
                     slideToAppear: Bool = true,
                     showPullIndicator: Bool = true,
-                    dismissIcon: UIImage? = nil,
-                    isDismissable: Bool,
-                    cornerRadius: CGFloat = 16
+                    isDismissable: Bool = true
         ) {
             self.contentView = contentView
             self.parentViewController = parentViewController
@@ -86,9 +90,7 @@ extension SlidingSheetView {
             self.allowedPositions = allowedPositions
             self.slideToAppear = slideToAppear
             self.showPullIndicator = showPullIndicator
-            self.dismissIcon = dismissIcon
             self.isDismissable = isDismissable
-            self.cornerRadius = cornerRadius
         }
     }
     

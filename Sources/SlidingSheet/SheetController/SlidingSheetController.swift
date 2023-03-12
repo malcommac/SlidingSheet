@@ -152,10 +152,16 @@ public class SlidingSheetController: UIViewController, UIGestureRecognizerDelega
     
     // MARK: - SlidingSheetViewDelegate
     
-    public func slidingSheetView(_ view: SlidingSheetView, heightDidChange y: CGFloat) {
-        UIView.animate(withDuration: 0.1) { // fade the background color
-            self.backgroundView.backgroundColor = UIColor.black.withAlphaComponent(y / self.view.frame.height)
+    public func slidingSheetView(_ view: SlidingSheetView, heightDidChange height: CGFloat) {
+        let percentage = (height / self.view.frame.height)
+        
+        if sheetView.config.dimmedBackground {
+            UIView.animate(withDuration: 0.1) { // fade the background color
+                self.backgroundView.backgroundColor = UIColor.black.withAlphaComponent(percentage)
+            }
         }
+        
+        delegate?.slidingSheetView(self, heightDidChange: height, percentage: percentage)
     }
     
     public func slidingSheetViewRequestForDismission(_ view: SlidingSheetView) {
