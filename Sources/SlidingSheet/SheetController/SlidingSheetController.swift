@@ -13,8 +13,6 @@
 import UIKit
 
 public class SlidingSheetController: UIViewController, UIGestureRecognizerDelegate, SlidingSheetViewDelegate {
-    
-    
     public weak var delegate: SlidingSheetControllerDelegate?
     public var slidingSheetView: SlidingSheetView
     
@@ -22,6 +20,11 @@ public class SlidingSheetController: UIViewController, UIGestureRecognizerDelega
     private var heightConstraint: NSLayoutConstraint?
     private var backgroundView = UIView()
 
+    public convenience init(config: SlidingSheetView.Config) {
+        let slidingSheetView = SlidingSheetView(config: config)
+        self.init(slidingSheetView: slidingSheetView)
+    }
+    
     public init(slidingSheetView: SlidingSheetView) {
         self.slidingSheetView = slidingSheetView
         super.init(nibName: nil, bundle: nil)
@@ -61,6 +64,7 @@ public class SlidingSheetController: UIViewController, UIGestureRecognizerDelega
         
         // Install background view
         self.view.addSubview(backgroundView)
+        backgroundView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             backgroundView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
             backgroundView.topAnchor.constraint(equalTo: self.view.topAnchor),
@@ -70,6 +74,7 @@ public class SlidingSheetController: UIViewController, UIGestureRecognizerDelega
         
         // Install sliding view
         self.view.addSubview(slidingSheetView)
+        slidingSheetView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             slidingSheetView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
             slidingSheetView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
@@ -99,6 +104,8 @@ public class SlidingSheetController: UIViewController, UIGestureRecognizerDelega
     }
     
     fileprivate func dismissSheet() {
+        delegate?.slidingSheetControllerWillDismiss(self)
+        
         heightConstraint?.isActive = false
         heightConstraint = slidingSheetView.heightAnchor.constraint(equalToConstant: 0)
         heightConstraint?.isActive = true
@@ -121,6 +128,14 @@ public class SlidingSheetController: UIViewController, UIGestureRecognizerDelega
     
     public func slidingSheetViewRequestForDismission(_ view: SlidingSheetView) {
         dismissSheet()
+    }
+    
+    public func slidingSheetView(_ view: SlidingSheetView, willMoveTo position: SlidingSheetView.Position) {
+        delegate?.slidingSheetController(self, willMoveTo: position)
+    }
+    
+    public func slidingSheetView(_ view: SlidingSheetView, didMoveFrom fromPosition: SlidingSheetView.Position, to toPosition: SlidingSheetView.Position) {
+        delegate?.slidingSheetController(self, didMoveFrom: fromPosition, to: toPosition)
     }
     
     // MARK: - UIGestureRecognizerDelegate
