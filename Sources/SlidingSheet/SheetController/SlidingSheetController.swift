@@ -180,8 +180,8 @@ public class SlidingSheetController: UIViewController, UIGestureRecognizerDelega
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
                                   shouldReceive touch: UITouch) -> Bool {
         
-        let isDescendantOfSliding = touch.view?.isDescendant(of: sheetView) ?? false
-        return !isDescendantOfSliding
+        let isDescendentOfSheet = touch.view?.isDescendant(of: sheetView) ?? false
+        return !isDescendentOfSheet
     }
     
 }

@@ -39,6 +39,10 @@ public protocol SlidingSheetViewDelegate: AnyObject {
     func slidingSheetView(_ view: SlidingSheetView,
                                 didMoveFrom fromPosition: SlidingSheetView.Position,
                                 to toPosition: SlidingSheetView.Position)
+    
+    /// Sliding sheet did request a dismission to its controller.
+    ///
+    /// - Parameter view: sliding sheet.
     func slidingSheetViewRequestForDismission(_ view: SlidingSheetView)
     
 }
