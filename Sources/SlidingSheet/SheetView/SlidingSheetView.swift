@@ -25,7 +25,7 @@ public class SlidingSheetView: UIView, UIGestureRecognizerDelegate {
     public weak var delegate: SlidingSheetViewDelegate?
     
     /// Instance of the view with the actual data represented by the sheet.
-    public var contentView: UIView {
+    public var contentView: SlideSheetPresented {
         config.contentView
     }
     
@@ -40,6 +40,9 @@ public class SlidingSheetView: UIView, UIGestureRecognizerDelegate {
     /// Current position of the sliding sheet.
     public lazy var currentPosition: Position = config.initialPosition
 
+    /// Pan gesture used to perform the slide with hands.
+    public let slidePanGesture = UIPanGestureRecognizer()
+    
     // MARK: - Private Properties
     
     /// Dismiss accessory button.
@@ -48,12 +51,17 @@ public class SlidingSheetView: UIView, UIGestureRecognizerDelegate {
     /// Current height constraint reference for the sheet. Used to perform animations.
     private var heightConstraint: NSLayoutConstraint?
     
-    /// Pan gesture used to perform the slide with hands.
-    private let panGesture = UIPanGestureRecognizer()
-    
     /// Start Y position of the gesture.
     private lazy var panGestureY = CGFloat(frame.height)
     
+    private var scrollViewOffsetObserverContext = UUID()
+    
+    /// Called after the sheet is properly set in place into the UI.
+    /// This is necessary since some events like the observe of the scroll view
+    /// should be not sent automatically when the view is being initialized in its frame
+    /// property in order to set as subview of its container.
+    private var layoutIsInProgress = true
+
     /// Define possible heights for each allowed state of the view.
     /// When state is not supported value is set to 0 and therefore ignored by the animation.
     private var allowedHeights: (
@@ -83,6 +91,82 @@ public class SlidingSheetView: UIView, UIGestureRecognizerDelegate {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Public Methods
+    
+    /// Setup the initial height of the sliding sheet based upon the current configuration.
+    ///
+    /// NOTE:
+    /// This method should be called only if you plan to use `SlidingSheetView` directly without
+    /// its controller.
+    public func setupLayout(animated: Bool) {
+        guard superview != nil else {
+            return // no superview, skip.
+        }
+        
+        delegate?.slidingSheetView(self, willMoveTo: config.initialPosition)
+        
+        if case .fitContent = config.initialPosition {
+            setupInitialHeight(allowedHeights.byContent, animated: animated)
+        } else {
+            setupInitialHeight(config.initialPosition.height, animated: animated)
+        }
+        
+        delegate?.slidingSheetView(self, didMoveFrom: nil, to: config.initialPosition)
+    }
+
+    /// Dismiss the sheet if allowed.
+    ///
+    /// - Returns: `true` if dismiss was performed, `false` otherwise.
+    @discardableResult
+    public func dismiss() -> Bool {
+        guard config.isDismissable else {
+            return false
+        }
+        
+        self.delegate?.slidingSheetViewRequestForDismission(self)
+        return true
+    }
+    
+    /// When the sheet is anchored the pull indicator view is hidden and
+    /// the corner radius is set to none.
+    ///
+    /// - Parameters:
+    ///   - anchored: `true` to enable anchored mode.
+    public func setAsAnchored(_ anchored: Bool) {
+        UIView.animate(withDuration: 0.25, delay: 0.0) {
+            self.pullIndicatorView?.alpha = (anchored ? 1 : 0)
+            self.layer.cornerRadius = (anchored ? self.config.cornerRadius : 0)
+        }
+    }
+    
+    /// Set the height based upon the new position and change the state of the control.
+    ///
+    /// - Parameter newPosition: new position to apply.
+    public func moveToPosition(_ newPosition: Position) {
+        let oldPosition = currentPosition
+        
+        delegate?.slidingSheetView(self, willMoveTo: newPosition)
+        
+        switch newPosition {
+        case let .fixed(height):
+            setHeight(height)
+        case .top:
+            setHeight(allowedHeights.top)
+            currentPosition = .top(allowedHeights.top)
+        case .middle:
+            setHeight(allowedHeights.middle)
+            currentPosition = .middle(allowedHeights.middle)
+        case .bottom:
+            setHeight(allowedHeights.bottom)
+            currentPosition = .bottom(allowedHeights.bottom)
+        case .fitContent:
+            setHeight(allowedHeights.byContent)
+            currentPosition = .fitContent
+        }
+
+        delegate?.slidingSheetView(self, didMoveFrom: oldPosition, to: currentPosition)
+    }
+    
     // MARK: - View Layout
     
     override public func layoutSubviews() {
@@ -98,31 +182,44 @@ public class SlidingSheetView: UIView, UIGestureRecognizerDelegate {
     /// Configure the UI with the elements of the sliding sheet.
     private func setupUI() {
         self.backgroundColor = .white
+        self.isOpaque = true
         
-        addSubview(contentView)
-        contentView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(contentView.presentedView)
+        contentView.presentedView.translatesAutoresizingMaskIntoConstraints = false
         
         if config.showPullIndicator { // install the pull indicator view at the top of the hseet.
             self.pullIndicatorView = setupPullIndicatorView()
         } else {
             // pull indicator is disabled,
             NSLayoutConstraint.activate([
-                contentView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-                contentView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-                contentView.topAnchor.constraint(equalTo: self.topAnchor, constant: config.contentViewVerticalMargins.bottom)
+                contentView.presentedView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+                contentView.presentedView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+                contentView.presentedView.topAnchor.constraint(equalTo: self.topAnchor, constant: config.contentViewVerticalMargins.bottom)
             ])
         }
         
-        if contentView.isKind(of: UIScrollView.self) {
-            let constraint = contentView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        if contentView.scrollView?.isKind(of: UIScrollView.self) ?? false {
+            let constraint = contentView.presentedView.bottomAnchor.constraint(equalTo: bottomAnchor)
             constraint.priority = .init(999)
             constraint.isActive = true
+            
+            contentView.scrollView?.addObserver(self, forKeyPath: "bounds", options: .new, context: &scrollViewOffsetObserverContext)
         }
         
         if let dismissIcon = config.dismissIcon {
             self.dismissButton = setupDismissAccessoryButton(icon: dismissIcon)
         }
+    }
+    
+    public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        guard layoutIsInProgress == false, // avoid the event to be called during the view initialization before being part of the superview.
+              context == &self.scrollViewOffsetObserverContext,
+              let scrollView = object as? UIScrollView,
+              scrollView == contentView.scrollView else {
+            return
+        }
         
+        delegate?.slidingSheetViewScrollViewDidChangeOffset(self, scrollView: scrollView, offset: scrollView.contentOffset)
     }
     
     /// Install the pull indicator.
@@ -144,18 +241,18 @@ public class SlidingSheetView: UIView, UIGestureRecognizerDelegate {
         ])
         
         NSLayoutConstraint.activate([
-            contentView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            contentView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            contentView.topAnchor.constraint(equalTo: pullView.bottomAnchor, constant: config.contentViewVerticalMargins.bottom)
+            contentView.presentedView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            contentView.presentedView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            contentView.presentedView.topAnchor.constraint(equalTo: pullView.bottomAnchor, constant: config.contentViewVerticalMargins.bottom)
         ])
         return pullView
     }
     
     /// Configure the pan gesture.
     private func setupPanGesture() {
-        addGestureRecognizer(panGesture)
-        panGesture.delegate = self
-        panGesture.addTarget(self, action: #selector(didPerformPanGesture(sender:)))
+        addGestureRecognizer(slidePanGesture)
+        slidePanGesture.delegate = self
+        slidePanGesture.addTarget(self, action: #selector(didPerformPanGesture(sender:)))
     }
     
     /// Install the dismiss button.
@@ -191,11 +288,7 @@ public class SlidingSheetView: UIView, UIGestureRecognizerDelegate {
     /// - Parameter sender: sender of the action.
     @objc
     private func onTapDismissSheet(sender: UIButton) {
-        guard config.isDismissable else {
-            return
-        }
-        
-        self.delegate?.slidingSheetViewRequestForDismission(self)
+        dismiss()
     }
     
     /// Calculate the height of the sliding sheet based upon
@@ -218,7 +311,7 @@ public class SlidingSheetView: UIView, UIGestureRecognizerDelegate {
                     allowedHeights.byContent = min(finalRect.height + Defaults.overscrollFitContent, Defaults.maxScreenHeight)
                 } else {
                     // enumerate subviews to find the correct height.
-                    let finalRect: CGRect = contentView.subviews.reduce(into: .zero) { rect, subview in
+                    let finalRect: CGRect = contentView.presentedView.subviews.reduce(into: .zero) { rect, subview in
                         rect = rect.union(subview.frame)
                     }
                     allowedHeights.byContent = finalRect.height
@@ -227,23 +320,12 @@ public class SlidingSheetView: UIView, UIGestureRecognizerDelegate {
         }
     }
     
-    /// Setup the initial height of the sliding sheet based upon the current configuration.
-    internal func setupInitialHeight() {
-        guard superview != nil else {
-            return // no superview, skip.
-        }
-        
-        if case .fitContent = config.initialPosition {
-            setupInitialHeight(allowedHeights.byContent)
-        } else {
-            setupInitialHeight(config.initialPosition.height)
-        }
-    }
-    
     /// Change the height of the sliding sheet.
     ///
     /// - Parameter height: height to set.
-    private func setupInitialHeight(_ height: CGFloat) {
+    private func setupInitialHeight(_ height: CGFloat, animated: Bool) {
+        layoutIsInProgress = true
+
         heightConstraint?.isActive = false
         heightConstraint = heightAnchor.constraint(equalToConstant: height)
         heightConstraint?.priority = .init(999)
@@ -256,10 +338,18 @@ public class SlidingSheetView: UIView, UIGestureRecognizerDelegate {
             return
         }
         
-        UIView.animate(withDuration: 0.25, delay: 0.0, options: .allowAnimatedContent, animations: { [weak self] in
+        if !animated {
+            self.superview?.layoutIfNeeded()
+            self.delegate?.slidingSheetView(self, heightDidChange: height)
+            self.layoutIsInProgress = false
+            return
+        }
+        
+        UIView.animate(withDuration: 0.35, delay: 0.0, options: .allowAnimatedContent, animations: { [weak self] in
             guard let self else { return }
             self.superview?.layoutIfNeeded()
             self.delegate?.slidingSheetView(self, heightDidChange: height)
+            self.layoutIsInProgress = false
         })
     }
     
@@ -270,6 +360,7 @@ public class SlidingSheetView: UIView, UIGestureRecognizerDelegate {
     private func didPerformPanGesture(sender: UIPanGestureRecognizer) {
         switch sender.state {
         case .began, .possible:
+            layoutIsInProgress = true
             panGestureY = frame.height
         case .changed:
             if let scrollView = contentView as? UIScrollView, scrollView.contentOffset.y <= 0 {
@@ -288,6 +379,7 @@ public class SlidingSheetView: UIView, UIGestureRecognizerDelegate {
             let currentY = -sender.translation(in: parentViewController?.view).y + panGestureY
             let currentVelocity = sender.velocity(in: parentViewController?.view).y
             moveToClosestAllowedPosition(forY: currentY, velocity: currentVelocity)
+            layoutIsInProgress = false
             
         @unknown default:
             break
@@ -340,34 +432,6 @@ public class SlidingSheetView: UIView, UIGestureRecognizerDelegate {
         }
     }
     
-    /// Set the height based upon the new position and change the state of the control.
-    ///
-    /// - Parameter newPosition: new position to apply.
-    private func moveToPosition(_ newPosition: Position) {
-        let oldPosition = currentPosition
-        
-        delegate?.slidingSheetView(self, willMoveTo: newPosition)
-        
-        switch newPosition {
-        case let .fixed(height):
-            setHeight(height)
-        case .top:
-            setHeight(allowedHeights.top)
-            currentPosition = .top(allowedHeights.top)
-        case .middle:
-            setHeight(allowedHeights.middle)
-            currentPosition = .middle(allowedHeights.middle)
-        case .bottom:
-            setHeight(allowedHeights.bottom)
-            currentPosition = .bottom(allowedHeights.bottom)
-        case .fitContent:
-            setHeight(allowedHeights.byContent)
-            currentPosition = .fitContent
-        }
-        
-        delegate?.slidingSheetView(self, didMoveFrom: oldPosition, to: currentPosition)
-    }
-    
     /// Internal function to setup the height and animate the transition.
     ///
     /// - Parameters:
@@ -382,13 +446,15 @@ public class SlidingSheetView: UIView, UIGestureRecognizerDelegate {
         setNeedsLayout()
         
         if animated {
-            UIView.animate(withDuration: 0.3,
+            UIView.animate(withDuration: 0.55,
                            delay: 0,
                            usingSpringWithDamping: 0.9,
                            initialSpringVelocity: 1,
                            options: .curveEaseOut, animations: ({ [weak self] in
                 self?.superview?.layoutIfNeeded()
             }))
+        } else {
+
         }
         
         self.delegate?.slidingSheetView(self, heightDidChange: height)
@@ -402,12 +468,12 @@ public class SlidingSheetView: UIView, UIGestureRecognizerDelegate {
             return false
         }
         
-        return scrollView.contentOffset.y == 0 && panGesture.velocity(in: parentViewController?.view).y > 0
+        return scrollView.contentOffset.y == 0 && slidePanGesture.velocity(in: parentViewController?.view).y > 0
     }
     
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
                                   shouldReceive touch: UITouch) -> Bool {
-        if (touch.view?.isDescendant(of: contentView) ?? false) &&
+        if (touch.view?.isDescendant(of: contentView.presentedView) ?? false) &&
             gestureRecognizer.isKind(of: UITapGestureRecognizer.self) {
             return false
         }

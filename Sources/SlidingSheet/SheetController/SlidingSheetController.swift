@@ -101,7 +101,7 @@ public class SlidingSheetController: UIViewController, UIGestureRecognizerDelega
             backgroundView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
             backgroundView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)
         ])
-        
+    
         // Install sliding view
         self.view.addSubview(sheetView)
         sheetView.translatesAutoresizingMaskIntoConstraints = false
@@ -116,7 +116,7 @@ public class SlidingSheetController: UIViewController, UIGestureRecognizerDelega
         self.view.setNeedsLayout()
         self.view.layoutIfNeeded()
         
-        sheetView.setupInitialHeight()
+        sheetView.setupLayout(animated: true)
     }
     
     /// Setup the tap gesture used to dismiss the sheet outside its frame.
@@ -172,8 +172,12 @@ public class SlidingSheetController: UIViewController, UIGestureRecognizerDelega
         delegate?.slidingSheetController(self, willMoveTo: position)
     }
     
-    public func slidingSheetView(_ view: SlidingSheetView, didMoveFrom fromPosition: SlidingSheetView.Position, to toPosition: SlidingSheetView.Position) {
+    public func slidingSheetView(_ view: SlidingSheetView, didMoveFrom fromPosition: SlidingSheetView.Position?, to toPosition: SlidingSheetView.Position) {
         delegate?.slidingSheetController(self, didMoveFrom: fromPosition, to: toPosition)
+    }
+    
+    public func slidingSheetViewScrollViewDidChangeOffset(_ view: SlidingSheetView, scrollView: UIScrollView, offset: CGPoint) {
+        delegate?.slidingSheetController(self, innerScrollView: scrollView, didChangeOffset: offset)
     }
     
     // MARK: - UIGestureRecognizerDelegate

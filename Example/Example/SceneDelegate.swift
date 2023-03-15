@@ -1,8 +1,13 @@
 //
-//  SceneDelegate.swift
-//  Example
+//  SlidingSheet
+//  Configurable Bottom Sheet for UIKit - like AirBnb and Apple Maps
 //
-//  Created by daniele on 12/03/23.
+//  Created & Maintained by Daniele Margutti
+//  Email: hello@danielemargutti
+//  Web: http://www.danielemargutti.com
+//
+//  Copyright ©2023 Daniele Margutti
+//  Licensed under MIT License.
 //
 
 import UIKit

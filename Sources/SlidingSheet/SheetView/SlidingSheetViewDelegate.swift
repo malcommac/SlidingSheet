@@ -10,7 +10,7 @@
 //  Licensed under MIT License.
 //
 
-import Foundation
+import UIKit
 
 /// The delegate of the events for the sliding sheet view.
 public protocol SlidingSheetViewDelegate: AnyObject {
@@ -38,12 +38,23 @@ public protocol SlidingSheetViewDelegate: AnyObject {
     ///   - fromPosition: old position.
     ///   - toPosition: new position.
     func slidingSheetView(_ view: SlidingSheetView,
-                          didMoveFrom fromPosition: SlidingSheetView.Position,
+                          didMoveFrom fromPosition: SlidingSheetView.Position?,
                           to toPosition: SlidingSheetView.Position)
     
     /// Sliding sheet did request a dismission to its controller.
     ///
     /// - Parameter view: sliding sheet.
     func slidingSheetViewRequestForDismission(_ view: SlidingSheetView)
+    
+    /// Called when you specify a `scrollView` as content view of the sliding sheet.
+    /// It will report chnages in its offset.
+    ///
+    /// - Parameters:
+    ///   - view: sliding sheet.
+    ///   - scrollView: inner scroll view object of the `SlidingSheetView`'s `contentView.scrollView`.
+    ///   - offset: new offset.
+    func slidingSheetViewScrollViewDidChangeOffset(_ view: SlidingSheetView,
+                                                   scrollView: UIScrollView,
+                                                   offset: CGPoint)
     
 }

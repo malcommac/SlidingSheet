@@ -1,8 +1,13 @@
 //
-//  AppDelegate.swift
-//  Example
+//  SlidingSheet
+//  Configurable Bottom Sheet for UIKit - like AirBnb and Apple Maps
 //
-//  Created by daniele on 12/03/23.
+//  Created & Maintained by Daniele Margutti
+//  Email: hello@danielemargutti
+//  Web: http://www.danielemargutti.com
+//
+//  Copyright ©2023 Daniele Margutti
+//  Licensed under MIT License.
 //
 
 import UIKit
@@ -14,6 +19,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        if #available(iOS 13.0, *) {
+            let tabBarAppearance: UITabBarAppearance = UITabBarAppearance()
+            tabBarAppearance.configureWithDefaultBackground()
+            tabBarAppearance.backgroundColor = UIColor.white
+            UITabBar.appearance().standardAppearance = tabBarAppearance
+
+            if #available(iOS 15.0, *) {
+                UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
+            }
+        }
+        
+        if #available(iOS 13, *) {
+            application.keyWindow?.overrideUserInterfaceStyle = .light
+        }
+       
+        if #available(iOS 15, *) {
+            let appearance = UINavigationBarAppearance()
+            appearance.configureWithOpaqueBackground()
+            UINavigationBar.appearance().standardAppearance = appearance
+            UINavigationBar.appearance().scrollEdgeAppearance = appearance
+        }
+
         return true
     }
 

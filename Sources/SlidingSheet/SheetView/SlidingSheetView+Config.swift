@@ -20,7 +20,7 @@ extension SlidingSheetView {
         // MARK: - Public Properties
         
         /// The content view to place into the bottom sheet.
-        public let contentView: UIView
+        public let contentView: SlideSheetPresented
         
         /// Parent view controller, used as coordinate system for pan gesture.
         public let parentViewController: UIViewController
@@ -76,7 +76,7 @@ extension SlidingSheetView {
         
         // MARK: - Initialization
         
-        public init(contentView: UIView,
+        public init(contentView: SlideSheetPresented,
                     parentViewController: UIViewController,
                     initialPosition: Position = .middle(),
                     allowedPositions: [Position],
@@ -124,6 +124,27 @@ extension SlidingSheetView {
             case let .middle(h): return h
             }
         }
+                    
+        public var isTop: Bool {
+            switch self {
+            case .top: return true
+            default: return false
+            }
+        }
+            
+        public var isBottom: Bool {
+            switch self {
+            case .bottom: return true
+            default: return false
+            }
+        }
+        
+        public var isMiddle: Bool {
+            switch self {
+            case .middle: return true
+            default: return false
+            }
+        }
     
     }
     
@@ -132,14 +153,41 @@ extension SlidingSheetView {
     /// Some defaults constants.
     public enum Defaults {
         static let overscrollFitContent = CGFloat(70)
-        static let navigationBarHeight = CGFloat(60)
         static let keyboard = CGFloat(100)
         static let maxScreenHeight: CGFloat = UIScreen.main.bounds.height - UIApplication.shared.statusBarFrame.height
-        
+                
         public static let top: CGFloat = UIScreen.main.bounds.height -
-                                         UIApplication.shared.statusBarFrame.height - navigationBarHeight
+                                         UIApplication.shared.statusBarFrame.height
         public static let middle: CGFloat = UIScreen.main.bounds.height / 2 + keyboard
         public static let bottom = CGFloat(100)
+    }
+    
+}
+
+// MARK: - SlideSheetPresentedView
+
+/// Define rules to present the view itself.
+public protocol SlideSheetPresented {
+    
+    /// This is the content view to be presented.
+    var presentedView: UIView  { get }
+    
+    /// If the view contains a scroll view (table or collection view)
+    /// you can return it here in order to better handle the
+    /// scroll gesture.
+    var scrollView: UIScrollView? { get }
+    
+}
+
+/// You can eventually pass a view as presented view for a simple case.
+extension SlideSheetPresented where Self: UIView {
+    
+    var presentedView: UIView  {
+        self
+    }
+    
+    var scrollView: UIScrollView? {
+        nil
     }
     
 }

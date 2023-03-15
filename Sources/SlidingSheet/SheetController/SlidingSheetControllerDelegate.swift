@@ -10,7 +10,7 @@
 //  Licensed under MIT License.
 //
 
-import Foundation
+import UIKit
 
 /// The delegate to receive relevant information about the state of the sliding sheet.
 public protocol SlidingSheetControllerDelegate: AnyObject {
@@ -50,7 +50,18 @@ public protocol SlidingSheetControllerDelegate: AnyObject {
     ///   - fromPosition: old position.
     ///   - toPosition: new position.
     func slidingSheetController(_ controller: SlidingSheetController,
-                                didMoveFrom fromPosition: SlidingSheetView.Position,
+                                didMoveFrom fromPosition: SlidingSheetView.Position?,
                                 to toPosition: SlidingSheetView.Position)
     
+    /// The inner scrollview specified by `contentView.scrollView` of the `SlidingSheetView` instance
+    /// did change it's offset due to a scroll.
+    ///
+    /// - Parameters:
+    ///   - controller: controller.
+    ///   - scrollView: scroll view instance.
+    ///   - offset: new offset.
+    func slidingSheetController(_ controller: SlidingSheetController,
+                                innerScrollView scrollView: UIScrollView,
+                                didChangeOffset offset: CGPoint)
+
 }
