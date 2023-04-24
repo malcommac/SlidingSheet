@@ -33,7 +33,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         super.viewDidLoad()
         
         self.title = "Sliding Sheet Demo"
-                
+
         self.view.addSubview(self.tableView)
         self.tableView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -52,7 +52,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        1
+        2
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -61,6 +61,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         switch indexPath.row {
         case 0:
             cell.textLabel?.text = "Map-like bottom sheet"
+        case 1:
+            cell.textLabel?.text = "Open Fixed Height Sheet"
         default:
             break
         }
@@ -69,7 +71,23 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        switch indexPath.row {
+        case 0:
+            openMapsLikeSheet()
+        case 1:
+            openFixedHeightSheet()
+        default:
+            break
+        }
+    }
+    
+    private func openMapsLikeSheet() {
         self.navigationController?.pushViewController(MapsController.create(), animated: true)
+    }
+    
+    private func openFixedHeightSheet() {
+        let nib = UINib(nibName: "FixedView", bundle: .main)
+        let view = nib.instantiate(withOwner: self).
     }
  
 }

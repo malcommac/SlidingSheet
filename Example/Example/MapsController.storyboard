@@ -31,13 +31,37 @@
                                             <constraint firstAttribute="height" constant="1" id="HT4-Wp-uBw"/>
                                         </constraints>
                                     </view>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zz4-oJ-ESE">
+                                        <rect key="frame" x="16" y="7.6666666666666714" width="117" height="35"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="117" id="nub-aN-TLr"/>
+                                        </constraints>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="filled" title="2 Bedrooms"/>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zW4-eH-72x">
+                                        <rect key="frame" x="153" y="7.6666666666666714" width="74" height="35"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" title="90 mq"/>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Y1K-5g-zTv">
+                                        <rect key="frame" x="244" y="7.6666666666666714" width="77" height="35"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" title="Floor 7"/>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="bottom" secondItem="H6P-Xo-3T3" secondAttribute="bottom" id="Cny-ZF-qbh"/>
+                                    <constraint firstItem="zz4-oJ-ESE" firstAttribute="centerY" secondItem="BOk-xT-3I6" secondAttribute="centerY" id="Efs-E7-1xe"/>
                                     <constraint firstAttribute="height" constant="50" id="H4E-cB-4qM"/>
                                     <constraint firstItem="H6P-Xo-3T3" firstAttribute="leading" secondItem="BOk-xT-3I6" secondAttribute="leading" constant="-108" id="QOo-If-mey"/>
+                                    <constraint firstItem="zW4-eH-72x" firstAttribute="centerY" secondItem="zz4-oJ-ESE" secondAttribute="centerY" id="Xj9-mI-De3"/>
                                     <constraint firstAttribute="trailing" secondItem="H6P-Xo-3T3" secondAttribute="trailing" id="Yga-Ky-ieH"/>
+                                    <constraint firstItem="Y1K-5g-zTv" firstAttribute="centerY" secondItem="zW4-eH-72x" secondAttribute="centerY" id="dL2-8a-fM6"/>
+                                    <constraint firstItem="zz4-oJ-ESE" firstAttribute="leading" secondItem="BOk-xT-3I6" secondAttribute="leading" constant="16" id="nwt-Zh-0tn"/>
+                                    <constraint firstItem="zW4-eH-72x" firstAttribute="leading" secondItem="zz4-oJ-ESE" secondAttribute="trailing" constant="20" id="sxQ-6m-VtN"/>
+                                    <constraint firstItem="Y1K-5g-zTv" firstAttribute="leading" secondItem="zW4-eH-72x" secondAttribute="trailing" constant="17" id="uWj-3w-DxP"/>
                                 </constraints>
                             </view>
                         </subviews>

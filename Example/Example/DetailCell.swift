@@ -28,8 +28,9 @@ public class DetailCell: UITableViewCell, UICollectionViewDelegate, UICollection
         
         collectionView.delegate = self
         collectionView.dataSource = self
+        collectionView.isPagingEnabled = true
+
         flowLayout.scrollDirection = .horizontal
-        flowLayout.minimumInteritemSpacing = 0
         
         collectionView.register(ImageCellClass.self, forCellWithReuseIdentifier: "ImageCellClass")
         collectionView.clipsToBounds = true
@@ -48,7 +49,13 @@ public class DetailCell: UITableViewCell, UICollectionViewDelegate, UICollection
         .zero
     }
     
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        0
+    }
     
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        0
+    }
     
     public func collectionView(_ collectionView: UICollectionView, layout
                                collectionViewLayout: UICollectionViewLayout,

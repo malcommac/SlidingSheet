@@ -79,4 +79,8 @@ public class ListController: UIViewController, UITableViewDelegate, UITableViewD
         tableView.dequeueReusableCell(withIdentifier: "DetailCell", for: indexPath) as! DetailCell
     }
     
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
 }

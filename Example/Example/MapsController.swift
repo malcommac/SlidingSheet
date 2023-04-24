@@ -74,7 +74,7 @@ public class MapsController: UIViewController {
         let navigationBarHeight = self.navigationController?.navigationBar.frame.height ?? 0
         let filtersViewHeight = viewFilters.frame.height
         
-        return (statusBarHeight + navigationBarHeight + filtersViewHeight - 20)
+        return (statusBarHeight + navigationBarHeight + filtersViewHeight - 25)
     }
     
     private func setupBottomSheet() {
@@ -113,28 +113,34 @@ public class MapsController: UIViewController {
 
 extension MapsController: SlidingSheetViewDelegate {
     
-    public func slidingSheetViewScrollViewDidChangeOffset(_ view: SlidingSheet.SlidingSheetView, scrollView: UIScrollView, offset: CGPoint) {
-        let threshold: CGFloat = -100
+    public func slidingSheetViewScrollViewDidChangeOffset(_ view: SlidingSheet.SlidingSheetView,
+                                                          scrollView: UIScrollView,
+                                                          offset: CGPoint) {
+        let threshold: CGFloat = -80
         if offset.y < threshold {
-            view.moveToPosition(.bottom())
+            view.moveToPosition(.bottom(), duration: 0.9)
         }
     }
     
-    public func slidingSheetView(_ view: SlidingSheet.SlidingSheetView, heightDidChange height: CGFloat) {
+    public func slidingSheetView(_ view: SlidingSheet.SlidingSheetView,
+                                 heightDidChange height: CGFloat) {
         
     }
     
-    public func slidingSheetView(_ view: SlidingSheet.SlidingSheetView, willMoveTo position: SlidingSheet.SlidingSheetView.Position) {
+    public func slidingSheetView(_ view: SlidingSheet.SlidingSheetView,
+                                 willMoveTo position: SlidingSheet.SlidingSheetView.Position) {
         
     }
     
-    public func slidingSheetView(_ view: SlidingSheet.SlidingSheetView, didMoveFrom fromPosition: SlidingSheet.SlidingSheetView.Position?, to toPosition: SlidingSheet.SlidingSheetView.Position) {
+    public func slidingSheetView(_ view: SlidingSheet.SlidingSheetView,
+                                 didMoveFromPosition position: SlidingSheet.SlidingSheetView.Position?,
+                                 toPosition: SlidingSheet.SlidingSheetView.Position) {
         
         // Modify appearance when fully expanded
         view.setAsAnchored(!toPosition.isTop)
         
         // Disable the pan gesture on top in order to avoid collpasing the sheet while moving inside table cells.
-        view.slidePanGesture.isEnabled = !toPosition.isTop
+        view.panGesture.isEnabled = !toPosition.isTop
         
         // Disable scrolling inside the table when collapsed.
         listController.tableView.isUserInteractionEnabled = toPosition.isTop

@@ -35,11 +35,11 @@ public protocol SlidingSheetViewDelegate: AnyObject {
     ///
     /// - Parameters:
     ///   - view: sliding sheet.
-    ///   - fromPosition: old position.
-    ///   - toPosition: new position.
+    ///   - position: old position.
+    ///   - newPosition: new position.
     func slidingSheetView(_ view: SlidingSheetView,
-                          didMoveFrom fromPosition: SlidingSheetView.Position?,
-                          to toPosition: SlidingSheetView.Position)
+                          didMoveFromPosition position: SlidingSheetView.Position?,
+                          toPosition newPosition: SlidingSheetView.Position)
     
     /// Sliding sheet did request a dismission to its controller.
     ///

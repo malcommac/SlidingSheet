@@ -19,6 +19,7 @@
 		640B31EB29BF8D210027010A /* DetailCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 640B31EA29BF8D210027010A /* DetailCell.xib */; };
 		640B31ED29BF8D3E0027010A /* DetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 640B31EC29BF8D3E0027010A /* DetailCell.swift */; };
 		640B31EF29BF93640027010A /* ListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 640B31EE29BF93640027010A /* ListController.swift */; };
+		640FB52029C310A80094DBDB /* FixedView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 640FB51F29C310A80094DBDB /* FixedView.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,7 @@
 		640B31EA29BF8D210027010A /* DetailCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DetailCell.xib; sourceTree = "<group>"; };
 		640B31EC29BF8D3E0027010A /* DetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCell.swift; sourceTree = "<group>"; };
 		640B31EE29BF93640027010A /* ListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListController.swift; sourceTree = "<group>"; };
+		640FB51F29C310A80094DBDB /* FixedView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FixedView.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +79,7 @@
 				640B31E629BF13B00027010A /* MapsController.swift */,
 				640B31EE29BF93640027010A /* ListController.swift */,
 				640B31EC29BF8D3E0027010A /* DetailCell.swift */,
+				640FB51F29C310A80094DBDB /* FixedView.xib */,
 				640B31E829BF13BD0027010A /* MapsController.storyboard */,
 				640B31EA29BF8D210027010A /* DetailCell.xib */,
 				640B31D229BE39880027010A /* Main.storyboard */,
@@ -159,6 +162,7 @@
 				640B31D929BE39890027010A /* LaunchScreen.storyboard in Resources */,
 				640B31E929BF13BD0027010A /* MapsController.storyboard in Resources */,
 				640B31D629BE39890027010A /* Assets.xcassets in Resources */,
+				640FB52029C310A80094DBDB /* FixedView.xib in Resources */,
 				640B31D429BE39880027010A /* Main.storyboard in Resources */,
 				640B31EB29BF8D210027010A /* DetailCell.xib in Resources */,
 			);

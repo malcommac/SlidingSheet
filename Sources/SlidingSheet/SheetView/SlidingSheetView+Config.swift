@@ -64,10 +64,7 @@ extension SlidingSheetView {
         
         /// The color of the pull indicator.
         /// By default is a light gray color.
-        public var pullIndicatorColor = UIColor(red: 229 / 255,
-                                                green: 229 / 255,
-                                                blue: 229 / 255,
-                                                alpha: 1)
+        public var pullIndicatorColor = UIColor.lightGray
         
         /// If set, when sliding view is presented via `SlidingSheetController` this
         /// option provide a dim to black of the area outside the sliding sheet providing

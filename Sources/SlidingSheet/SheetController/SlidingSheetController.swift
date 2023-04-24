@@ -152,7 +152,8 @@ public class SlidingSheetController: UIViewController, UIGestureRecognizerDelega
     
     // MARK: - SlidingSheetViewDelegate
     
-    public func slidingSheetView(_ view: SlidingSheetView, heightDidChange height: CGFloat) {
+    public func slidingSheetView(_ view: SlidingSheetView,
+                                 heightDidChange height: CGFloat) {
         let percentage = (height / self.view.frame.height)
         
         if sheetView.config.dimmedBackground {
@@ -168,15 +169,20 @@ public class SlidingSheetController: UIViewController, UIGestureRecognizerDelega
         dismissSheet()
     }
     
-    public func slidingSheetView(_ view: SlidingSheetView, willMoveTo position: SlidingSheetView.Position) {
+    public func slidingSheetView(_ view: SlidingSheetView,
+                                 willMoveTo position: SlidingSheetView.Position) {
         delegate?.slidingSheetController(self, willMoveTo: position)
     }
     
-    public func slidingSheetView(_ view: SlidingSheetView, didMoveFrom fromPosition: SlidingSheetView.Position?, to toPosition: SlidingSheetView.Position) {
-        delegate?.slidingSheetController(self, didMoveFrom: fromPosition, to: toPosition)
+    public func slidingSheetView(_ view: SlidingSheetView,
+                                 didMoveFromPosition position: SlidingSheetView.Position?,
+                                 toPosition: SlidingSheetView.Position) {
+        delegate?.slidingSheetController(self, didMoveFrom: position, to: toPosition)
     }
     
-    public func slidingSheetViewScrollViewDidChangeOffset(_ view: SlidingSheetView, scrollView: UIScrollView, offset: CGPoint) {
+    public func slidingSheetViewScrollViewDidChangeOffset(_ view: SlidingSheetView,
+                                                          scrollView: UIScrollView,
+                                                          offset: CGPoint) {
         delegate?.slidingSheetController(self, innerScrollView: scrollView, didChangeOffset: offset)
     }
     

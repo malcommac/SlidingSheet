@@ -41,7 +41,7 @@ public class SlidingSheetView: UIView, UIGestureRecognizerDelegate {
     public lazy var currentPosition: Position = config.initialPosition
 
     /// Pan gesture used to perform the slide with hands.
-    public let slidePanGesture = UIPanGestureRecognizer()
+    public let panGesture = UIPanGestureRecognizer()
     
     // MARK: - Private Properties
     
@@ -111,7 +111,7 @@ public class SlidingSheetView: UIView, UIGestureRecognizerDelegate {
             setupInitialHeight(config.initialPosition.height, animated: animated)
         }
         
-        delegate?.slidingSheetView(self, didMoveFrom: nil, to: config.initialPosition)
+        delegate?.slidingSheetView(self, didMoveFromPosition: nil, toPosition: config.initialPosition)
     }
 
     /// Dismiss the sheet if allowed.
@@ -141,8 +141,10 @@ public class SlidingSheetView: UIView, UIGestureRecognizerDelegate {
     
     /// Set the height based upon the new position and change the state of the control.
     ///
-    /// - Parameter newPosition: new position to apply.
-    public func moveToPosition(_ newPosition: Position) {
+    /// - Parameters:
+    ///   - newPosition: new position to apply.
+    ///   - duration: duration of the animation, if not specified the default one is used.
+    public func moveToPosition(_ newPosition: Position, duration: TimeInterval? = nil) {
         let oldPosition = currentPosition
         
         delegate?.slidingSheetView(self, willMoveTo: newPosition)
@@ -151,20 +153,20 @@ public class SlidingSheetView: UIView, UIGestureRecognizerDelegate {
         case let .fixed(height):
             setHeight(height)
         case .top:
-            setHeight(allowedHeights.top)
+            setHeight(allowedHeights.top, duration: duration)
             currentPosition = .top(allowedHeights.top)
         case .middle:
-            setHeight(allowedHeights.middle)
+            setHeight(allowedHeights.middle, duration: duration)
             currentPosition = .middle(allowedHeights.middle)
         case .bottom:
-            setHeight(allowedHeights.bottom)
+            setHeight(allowedHeights.bottom, duration: duration)
             currentPosition = .bottom(allowedHeights.bottom)
         case .fitContent:
-            setHeight(allowedHeights.byContent)
+            setHeight(allowedHeights.byContent, duration: duration)
             currentPosition = .fitContent
         }
 
-        delegate?.slidingSheetView(self, didMoveFrom: oldPosition, to: currentPosition)
+        delegate?.slidingSheetView(self, didMoveFromPosition: oldPosition, toPosition: currentPosition)
     }
     
     // MARK: - View Layout
@@ -250,9 +252,9 @@ public class SlidingSheetView: UIView, UIGestureRecognizerDelegate {
     
     /// Configure the pan gesture.
     private func setupPanGesture() {
-        addGestureRecognizer(slidePanGesture)
-        slidePanGesture.delegate = self
-        slidePanGesture.addTarget(self, action: #selector(didPerformPanGesture(sender:)))
+        addGestureRecognizer(panGesture)
+        panGesture.delegate = self
+        panGesture.addTarget(self, action: #selector(didPerformPanGesture(sender:)))
     }
     
     /// Install the dismiss button.
@@ -437,24 +439,25 @@ public class SlidingSheetView: UIView, UIGestureRecognizerDelegate {
     /// - Parameters:
     ///   - height: height to set.
     ///   - animated: animate the transition, by default is set to `true`.
-    private func setHeight(_ height: CGFloat, animated: Bool = true) {
+    private func setHeight(_ height: CGFloat, animated: Bool = true, duration: TimeInterval? = nil) {
         heightConstraint?.isActive = false
         heightConstraint = heightAnchor.constraint(equalToConstant: height)
         heightConstraint?.priority = .init(999)
         heightConstraint?.isActive = true
-        
+            
         setNeedsLayout()
         
         if animated {
-            UIView.animate(withDuration: 0.55,
+            let duration = (duration ?? 0.55)
+            UIView.animate(withDuration: duration,
                            delay: 0,
                            usingSpringWithDamping: 0.9,
                            initialSpringVelocity: 1,
-                           options: .curveEaseOut, animations: ({ [weak self] in
+                           options: .curveEaseInOut, animations: ({ [weak self] in
                 self?.superview?.layoutIfNeeded()
             }))
         } else {
-
+            superview?.layoutIfNeeded()
         }
         
         self.delegate?.slidingSheetView(self, heightDidChange: height)
@@ -468,7 +471,7 @@ public class SlidingSheetView: UIView, UIGestureRecognizerDelegate {
             return false
         }
         
-        return scrollView.contentOffset.y == 0 && slidePanGesture.velocity(in: parentViewController?.view).y > 0
+        return scrollView.contentOffset.y == 0 && panGesture.velocity(in: parentViewController?.view).y > 0
     }
     
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,

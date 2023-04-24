@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="Sbk-Ue-zeI">
+            <rect key="frame" x="0.0" y="0.0" width="393" height="200"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Bottom Sheet" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yad-t6-Zrv">
+                    <rect key="frame" x="114" y="15" width="165" height="34"/>
+                    <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IeW-BU-cgd">
+                    <rect key="frame" x="146.66666666666666" y="145" width="100" height="35"/>
+                    <state key="normal" title="Button"/>
+                    <buttonConfiguration key="configuration" style="filled" title="Download"/>
+                </button>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="SlidingSheet is a lightweight yet configurable bottom sheet component made in UIKit" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XqK-NE-Nhh">
+                    <rect key="frame" x="60" y="58.999999999999993" width="273" height="64.333333333333314"/>
+                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="74s-hI-5co"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstItem="74s-hI-5co" firstAttribute="trailing" secondItem="XqK-NE-Nhh" secondAttribute="trailing" constant="60" id="4fq-jf-L2z"/>
+                <constraint firstItem="yad-t6-Zrv" firstAttribute="centerX" secondItem="Sbk-Ue-zeI" secondAttribute="centerX" id="Ngr-Ek-tr3"/>
+                <constraint firstItem="IeW-BU-cgd" firstAttribute="centerX" secondItem="Sbk-Ue-zeI" secondAttribute="centerX" id="ZBg-Bh-D9C"/>
+                <constraint firstItem="yad-t6-Zrv" firstAttribute="top" secondItem="Sbk-Ue-zeI" secondAttribute="top" constant="15" id="aDh-Wx-LmF"/>
+                <constraint firstItem="XqK-NE-Nhh" firstAttribute="leading" secondItem="74s-hI-5co" secondAttribute="leading" constant="60" id="hBc-av-nQ8"/>
+                <constraint firstItem="XqK-NE-Nhh" firstAttribute="top" secondItem="74s-hI-5co" secondAttribute="top" id="rPu-l6-tuK"/>
+                <constraint firstItem="74s-hI-5co" firstAttribute="bottom" secondItem="IeW-BU-cgd" secondAttribute="bottom" constant="20" id="srO-YS-l4b"/>
+            </constraints>
+            <nil key="simulatedTopBarMetrics"/>
+            <nil key="simulatedBottomBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="-31.297709923664122" y="56.338028169014088"/>
+        </view>
+    </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
